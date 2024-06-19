@@ -568,6 +568,7 @@ require('lazy').setup({
         clangd = {},
         bzl = {},
         yamlls = {},
+        taplo = {},
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
