@@ -18,26 +18,21 @@ return {
       'nvim-lua/plenary.nvim',
       'hrsh7th/nvim-cmp',
     },
-    config = function()
-      require('codeium').setup {}
-    end,
+    opts = {},
   },
   {
     'stevearc/oil.nvim',
     ---@module 'oil'
     ---@type oil.SetupOpts
-    opts = {},
+    opts = {
+      view_options = {
+        -- Show files and directories that start with "."
+        show_hidden = true,
+      },
+    },
     dependencies = {
       { 'echasnovski/mini.icons', opts = {} },
     },
-    config = function()
-      require('oil').setup {
-        view_options = {
-          -- Show files and directories that start with "."
-          show_hidden = true,
-        },
-      }
-    end,
   },
   {
     'ThePrimeagen/harpoon',

@@ -660,6 +660,7 @@ require('lazy').setup({
         'shfmt',
         'isort',
         'black',
+        'codespell',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -722,6 +723,7 @@ require('lazy').setup({
         zsh = { 'shellcheck', 'shfmt' },
         bash = { 'shellcheck', 'shfmt' },
         toml = { 'taplo' },
+        ['_'] = { 'trim_whitespace' },
       },
     },
   },
