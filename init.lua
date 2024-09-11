@@ -191,6 +191,18 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 vim.keymap.set('n', '<C-q>', '<C-w><C-q>', { desc = 'Quit the focused window' })
 
+local format_lsp_modified_on_save_repos = {
+  FORMAT_LSP_TESTONLY = true,
+}
+local format_lsp_modified_on_save = function()
+  if not vim.b.format_lsp_modified_on_save then
+    local root_path = vim.fn.system 'git rev-parse --show-toplevel'
+    local parts = vim.split(root_path, '/')
+    local git_repo_name = vim.trim(parts[#parts])
+    vim.b.format_lsp_modified_on_save = format_lsp_modified_on_save_repos[git_repo_name] ~= nil
+  end
+  return vim.b.format_lsp_modified_on_save
+end
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -468,6 +480,8 @@ require('lazy').setup({
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
+      -- Needed to format by LSP modified.
+      'joechrisellis/lsp-format-modifications.nvim',
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -578,6 +592,28 @@ require('lazy').setup({
             })
           end
 
+          -- Format on save LSP modified.
+          -- https://github.com/joechrisellis/lsp-format-modifications.nvim
+          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_rangeFormatting) then
+            if format_lsp_modified_on_save() then
+              local augroup_id = vim.api.nvim_create_augroup('FormatModificationsDocumentFormattingGroup',
+                { clear = false })
+              vim.api.nvim_clear_autocmds { group = augroup_id, buffer = event.buf }
+              vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
+                group = augroup_id,
+                buffer = event.buf,
+                callback = function()
+                  local lsp_format_modifications = require 'lsp-format-modifications'
+                  lsp_format_modifications.format_modifications(client, event.buf)
+                end,
+              })
+            end
+
+            vim.keymap.set('n', '<leader>F', function()
+              local lsp_format_modifications = require 'lsp-format-modifications'
+              lsp_format_modifications.format_modifications(client, event.buf)
+            end, { desc = '[F]ormat modified buffer' })
+          end
           -- The following code creates a keymap to toggle inlay hints in your
           -- code, if the language server you are using supports them
           --
@@ -709,6 +745,7 @@ require('lazy').setup({
         return {
           timeout_ms = 500,
           lsp_format = lsp_format_opt,
+          dry_run = format_lsp_modified_on_save(),
         }
       end,
       formatters_by_ft = {
