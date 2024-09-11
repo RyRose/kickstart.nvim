@@ -191,16 +191,25 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 vim.keymap.set('n', '<C-q>', '<C-w><C-q>', { desc = 'Quit the focused window' })
 
-local format_lsp_modified_on_save_repos = {
-  FORMAT_LSP_TESTONLY = true,
-}
-local format_lsp_modified_on_save = function()
-  if not vim.b.format_lsp_modified_on_save then
-    local root_path = vim.fn.system 'git rev-parse --show-toplevel'
-    local parts = vim.split(root_path, '/')
-    local git_repo_name = vim.trim(parts[#parts])
-    vim.b.format_lsp_modified_on_save = format_lsp_modified_on_save_repos[git_repo_name] ~= nil
+vim.g.format_lsp_modified_on_save = function()
+  if vim.b.format_lsp_modified_on_save ~= nil then
+    return vim.b.format_lsp_modified_on_save
   end
+  local format_lsp_modified_on_save_repos = {
+    FORMAT_LSP_TESTONLY = true,
+  }
+  local root_path = vim.system({ 'git', 'rev-parse', '--show-toplevel' }, { text = true, cwd = vim.fn.expand '%:p:h' }):wait().stdout
+
+  -- Default to not formatting lsp modified on save.
+  -- This should only occur if we are not in a git repo, in which
+  -- case it is unsupported anyways.
+  if not root_path then
+    vim.b.format_lsp_modified_on_save = false
+    return vim.b.format_lsp_modified_on_save
+  end
+  local parts = vim.split(root_path, '/')
+  local git_repo_name = vim.trim(parts[#parts])
+  vim.b.format_lsp_modified_on_save = format_lsp_modified_on_save_repos[git_repo_name] ~= nil
   return vim.b.format_lsp_modified_on_save
 end
 -- [[ Basic Autocommands ]]
@@ -595,7 +604,7 @@ require('lazy').setup({
           -- Format on save LSP modified.
           -- https://github.com/joechrisellis/lsp-format-modifications.nvim
           if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_rangeFormatting) then
-            if format_lsp_modified_on_save() then
+            if vim.g.format_lsp_modified_on_save() then
               local augroup_id = vim.api.nvim_create_augroup('FormatModificationsDocumentFormattingGroup', { clear = false })
               vim.api.nvim_clear_autocmds { group = augroup_id, buffer = event.buf }
               vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
@@ -744,7 +753,7 @@ require('lazy').setup({
         return {
           timeout_ms = 500,
           lsp_format = lsp_format_opt,
-          dry_run = format_lsp_modified_on_save(),
+          dry_run = vim.g.format_lsp_modified_on_save(),
         }
       end,
       formatters_by_ft = {
