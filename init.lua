@@ -596,8 +596,7 @@ require('lazy').setup({
           -- https://github.com/joechrisellis/lsp-format-modifications.nvim
           if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_rangeFormatting) then
             if format_lsp_modified_on_save() then
-              local augroup_id = vim.api.nvim_create_augroup('FormatModificationsDocumentFormattingGroup',
-                { clear = false })
+              local augroup_id = vim.api.nvim_create_augroup('FormatModificationsDocumentFormattingGroup', { clear = false })
               vim.api.nvim_clear_autocmds { group = augroup_id, buffer = event.buf }
               vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
                 group = augroup_id,
