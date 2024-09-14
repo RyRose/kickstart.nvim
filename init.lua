@@ -659,6 +659,8 @@ require('lazy').setup({
         gopls = {},
         -- bashls = {},
         pyright = {},
+        html = {},
+        angularls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -760,6 +762,7 @@ require('lazy').setup({
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
+        go = { 'goimports' },
 
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -768,6 +771,8 @@ require('lazy').setup({
         zsh = { 'shellcheck', 'shfmt' },
         bash = { 'shellcheck', 'shfmt' },
         toml = { 'taplo' },
+        html = { 'prettier' },
+        yaml = { 'yamlfmt' },
         ['_'] = { 'trim_whitespace' },
       },
     },
@@ -808,6 +813,7 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      'hrsh7th/cmp-buffer',
     },
     config = function()
       -- See `:help cmp`
@@ -885,6 +891,7 @@ require('lazy').setup({
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'codeium' },
+          { name = 'buffer' },
         },
       }
     end,
