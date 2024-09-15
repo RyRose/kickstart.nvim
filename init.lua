@@ -758,6 +758,11 @@ require('lazy').setup({
           dry_run = vim.g.format_lsp_modified_on_save(),
         }
       end,
+      formatters = {
+        mdformat = {
+          prepend_args = { '--wrap', '80' },
+        },
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
@@ -771,8 +776,9 @@ require('lazy').setup({
         zsh = { 'shellcheck', 'shfmt' },
         bash = { 'shellcheck', 'shfmt' },
         toml = { 'taplo' },
-        html = { 'prettier' },
+        -- html = { 'prettier' },
         yaml = { 'yamlfmt' },
+        markdown = { 'mdformat', 'markdownlint' },
         ['_'] = { 'trim_whitespace' },
       },
     },
