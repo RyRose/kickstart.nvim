@@ -146,7 +146,8 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+-- See vim-sleuth for listchars setting.
+-- vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -156,6 +157,15 @@ vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
+
+-- Render tabs as 4 spaces instead of 8. I'm not generally editing the Linux kernel.
+vim.opt.tabstop = 4
+
+-- https://github.com/kevinhwang91/nvim-ufo?tab=readme-ov-file#minimal-configuration
+vim.opt.foldcolumn = '1' -- '0' is not bad
+vim.opt.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+vim.opt.foldlevelstart = 99
+vim.opt.foldenable = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -212,6 +222,7 @@ vim.g.format_lsp_modified_on_save = function()
   vim.b.format_lsp_modified_on_save = format_lsp_modified_on_save_repos[git_repo_name] ~= nil
   return vim.b.format_lsp_modified_on_save
 end
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -251,7 +262,21 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+  {
+    'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+    config = function()
+      vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost', 'BufFilePost' }, {
+        desc = 'Update listchars to reflect vim-sleuth autodetection.',
+        callback = function()
+          if vim.o.expandtab then
+            vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+          else
+            vim.opt.listchars = { tab = '  ', trail = '·', nbsp = '␣' }
+          end
+        end,
+      })
+    end,
+  },
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -640,6 +665,10 @@ require('lazy').setup({
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      }
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -661,6 +690,7 @@ require('lazy').setup({
         pyright = {},
         html = {},
         angularls = {},
+        templ = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -779,6 +809,7 @@ require('lazy').setup({
         -- html = { 'prettier' },
         yaml = { 'yamlfmt' },
         markdown = { 'mdformat', 'markdownlint' },
+        templ = { 'templ' },
         ['_'] = { 'trim_whitespace' },
       },
     },
@@ -1002,7 +1033,7 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   require 'kickstart.plugins.debug',
-  require 'kickstart.plugins.indent_line',
+  -- require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
