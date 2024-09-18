@@ -13,14 +13,6 @@ return {
     end,
   },
   {
-    'Exafunction/codeium.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'hrsh7th/nvim-cmp',
-    },
-    opts = {},
-  },
-  {
     'stevearc/oil.nvim',
     ---@module 'oil'
     ---@type oil.SetupOpts
