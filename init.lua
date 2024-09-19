@@ -35,8 +35,9 @@ end)
 -- Enable break indent
 vim.opt.breakindent = true
 
--- Save undo history
+-- Save undo history permanently.
 vim.opt.undofile = true
+vim.opt.undodir = os.getenv 'HOME' .. '/.vim/undodir'
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.opt.ignorecase = true
@@ -46,7 +47,7 @@ vim.opt.smartcase = true
 vim.opt.signcolumn = 'yes'
 
 -- Decrease update time
-vim.opt.updatetime = 250
+vim.opt.updatetime = 50
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
@@ -80,6 +81,9 @@ vim.opt.foldcolumn = '1' -- '0' is not bad
 vim.opt.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
 vim.opt.foldlevelstart = 99
 vim.opt.foldenable = true
+
+-- Disable linewrap. I prefer the line to not wrap.
+vim.opt.wrap = false
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -136,6 +140,20 @@ vim.g.format_lsp_modified_on_save = function()
   vim.b.format_lsp_modified_on_save = format_lsp_modified_on_save_repos[git_repo_name] ~= nil
   return vim.b.format_lsp_modified_on_save
 end
+
+-- Call zz after moving up/down to recenter window.
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+vim.keymap.set('n', 'G', 'Gzz', {})
+
+-- Add ability to move chunks of text vertically once selected.
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+
+-- Keep cursor in place when appending next line to current line.
+vim.keymap.set('n', 'J', 'mzJ`z')
+
+-- Disable Q, which repeats register.
+vim.keymap.set('n', 'Q', '<nop>')
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -548,7 +566,7 @@ require('lazy').setup({
         rust_analyzer = {},
         gopls = {},
         pyright = {},
-        html = {},
+        -- html = {},
         angularls = {},
         templ = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -597,6 +615,9 @@ require('lazy').setup({
         'isort',
         'black',
         'codespell',
+        'htmlhint',
+        'prettierd',
+        'prettier',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -660,13 +681,13 @@ require('lazy').setup({
         go = { 'goimports' },
 
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
         cpp = { 'clang-format' },
         sh = { 'shellcheck', 'shfmt' },
         zsh = { 'shellcheck', 'shfmt' },
         bash = { 'shellcheck', 'shfmt' },
         toml = { 'taplo' },
-        -- html = { 'prettier' },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
         yaml = { 'yamlfmt' },
         markdown = { 'mdformat', 'markdownlint' },
         templ = { 'templ' },
