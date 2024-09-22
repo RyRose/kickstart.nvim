@@ -356,7 +356,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Search by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = 'Search [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = 'Search [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader>s,', builtin.oldfiles, { desc = 'Search Recent Files ("," for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
@@ -381,6 +381,14 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = 'Search [N]eovim files' })
+
+      -- Shortcut for searching your dot files
+      vim.keymap.set('n', '<leader>s.', function()
+        builtin.find_files {
+          cwd = vim.fn.expand '~/.dotfiles',
+          hidden = true,
+        }
+      end, { desc = 'Search [.] files' })
     end,
   },
 
@@ -566,9 +574,11 @@ require('lazy').setup({
         rust_analyzer = {},
         gopls = {},
         pyright = {},
-        -- html = {},
+        html = {},
         angularls = {},
         templ = {},
+        htmx = {},
+        tailwindcss = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -688,9 +698,11 @@ require('lazy').setup({
         bash = { 'shellcheck', 'shfmt' },
         toml = { 'taplo' },
         html = { 'prettierd', 'prettier', stop_after_first = true },
+        htmlangular = { 'prettierd', 'prettier', stop_after_first = true },
         yaml = { 'yamlfmt' },
         markdown = { 'mdformat', 'markdownlint' },
         templ = { 'templ' },
+        -- sql = { 'sql-formatter' },
         ['_'] = { 'trim_whitespace' },
       },
     },
