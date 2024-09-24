@@ -197,7 +197,9 @@ require('lazy').setup({
   {
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
     config = function()
-      vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost', 'BufFilePost' }, {
+      -- Trigger after sleuth autocommands.
+      -- https://github.com/tpope/vim-sleuth/blob/master/plugin/sleuth.vim#L665
+      vim.api.nvim_create_autocmd({ 'BufEnter' }, {
         desc = 'Update listchars to reflect vim-sleuth autodetection.',
         callback = function()
           if vim.o.expandtab then
@@ -579,6 +581,7 @@ require('lazy').setup({
         templ = {},
         htmx = {},
         tailwindcss = {},
+        -- sqlls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -628,6 +631,7 @@ require('lazy').setup({
         'htmlhint',
         'prettierd',
         'prettier',
+        'sqlfluff',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -674,7 +678,7 @@ require('lazy').setup({
           lsp_format_opt = 'fallback'
         end
         return {
-          timeout_ms = 500,
+          timeout_ms = 2000,
           lsp_format = lsp_format_opt,
           dry_run = vim.g.format_lsp_modified_on_save(),
         }
@@ -702,6 +706,7 @@ require('lazy').setup({
         yaml = { 'yamlfmt' },
         markdown = { 'mdformat', 'markdownlint' },
         templ = { 'templ' },
+        sql = { 'sqlfluff' },
         -- sql = { 'sql-formatter' },
         ['_'] = { 'trim_whitespace' },
       },
@@ -839,6 +844,14 @@ require('lazy').setup({
             },
           },
         }),
+      })
+
+      -- Setup up vim-dadbod
+      cmp.setup.filetype({ 'sql' }, {
+        sources = {
+          { name = 'vim-dadbod-completion' },
+          { name = 'buffer' },
+        },
       })
     end,
   },
