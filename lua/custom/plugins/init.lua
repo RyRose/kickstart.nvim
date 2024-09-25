@@ -1,112 +1,23 @@
--- You can add your own plugins here or in other files in this directory!
---  I promise not to create any merge conflicts in this directory :)
---
--- See the kickstart.nvim README for more information
-return {
-  {
-    'catppuccin/nvim',
-    name = 'catppuccin',
-    priority = 1000,
-    init = function()
-      -- catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
-      vim.cmd.colorscheme 'catppuccin-frappe'
-    end,
-  },
-  {
-    'stevearc/oil.nvim',
-    ---@module 'oil'
-    ---@type oil.SetupOpts
-    opts = {
-      view_options = {
-        -- Show files and directories that start with "."
-        show_hidden = true,
-      },
-    },
-    dependencies = {
-      { 'echasnovski/mini.icons', opts = {} },
-    },
-  },
-  {
-    'ThePrimeagen/harpoon',
-    branch = 'harpoon2',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope.nvim',
-    },
-    config = function()
-      -- REQUIRED
-      local harpoon = require 'harpoon'
-      harpoon:setup()
-      -- REQUIRED
+vim.g.format_lsp_modified_on_save = function()
+  if vim.g.format_lsp_modified_on_save_repos == nil then
+    return false
+  end
+  if vim.b.format_lsp_modified_on_save ~= nil then
+    return vim.b.format_lsp_modified_on_save
+  end
+  local root_path = vim.system({ 'git', 'rev-parse', '--show-toplevel' }, { text = true, cwd = vim.fn.expand '%:p:h' }):wait().stdout
 
-      local map = function(keys, desc, func, mode)
-        mode = mode or 'n'
-        vim.keymap.set(mode, keys, func, { desc = 'HPN: ' .. desc })
-      end
+  -- Default to not formatting lsp modified on save.
+  -- This should only occur if we are not in a git repo, in which
+  -- case it is unsupported anyways.
+  if not root_path then
+    vim.b.format_lsp_modified_on_save = false
+    return vim.b.format_lsp_modified_on_save
+  end
+  local parts = vim.split(root_path, '/')
+  local git_repo_name = vim.trim(parts[#parts])
+  vim.b.format_lsp_modified_on_save = vim.g.format_lsp_modified_on_save_repos[git_repo_name] ~= nil
+  return vim.b.format_lsp_modified_on_save
+end
 
-      -- Basic Setup
-      map('<leader>aa', '[A]dd File', function()
-        harpoon:list():add()
-      end)
-
-      map('<leader>ac', '[C]lear', function()
-        harpoon:list():clear()
-      end)
-
-      -- Telescope Configuration
-      -- https://github.com/ThePrimeagen/harpoon/tree/harpoon2?tab=readme-ov-file#telescope
-      local conf = require('telescope.config').values
-      local function toggle_telescope(harpoon_files)
-        local file_paths = {}
-        for _, item in ipairs(harpoon_files.items) do
-          table.insert(file_paths, item.value)
-        end
-
-        require('telescope.pickers')
-          .new({}, {
-            prompt_title = 'Harpoon',
-            finder = require('telescope.finders').new_table {
-              results = file_paths,
-            },
-            previewer = conf.file_previewer {},
-            sorter = conf.generic_sorter {},
-          })
-          :find()
-      end
-
-      map('<leader>al', '[L]ist Files', function()
-        toggle_telescope(harpoon:list())
-      end)
-    end,
-  },
-  {
-    'kevinhwang91/nvim-ufo',
-    dependencies = {
-      'kevinhwang91/promise-async',
-    },
-    opts = {},
-  },
-  {
-    'mbbill/undotree',
-    config = function()
-      vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = 'Toggle [u]ndo tree' })
-    end,
-  },
-  {
-    'kristijanhusak/vim-dadbod-ui',
-    dependencies = {
-      { 'tpope/vim-dadbod', lazy = true },
-      { 'kristijanhusak/vim-dadbod-completion', ft = { 'sql', 'mysql', 'plsql' }, lazy = true }, -- Optional
-    },
-    cmd = {
-      'DBUI',
-      'DBUIToggle',
-      'DBUIAddConnection',
-      'DBUIFindBuffer',
-    },
-    init = function()
-      -- Your DBUI configuration
-      vim.g.db_ui_use_nerd_fonts = vim.g.have_nerd_font
-    end,
-  },
-}
+return {}
