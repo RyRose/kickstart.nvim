@@ -13,6 +13,25 @@ return {
         desc = '[F]ormat buffer',
       },
     },
+    init = function()
+      -- You can add other tools here that you want Mason to install
+      -- for you, so that they are available from within Neovim.
+      vim.g.mason_tools = vim.list_extend(vim.g.mason_tools, {
+        'black',
+        'goimports',
+        'markdownlint',
+        'mdformat',
+        'prettier',
+        'prettierd',
+        'shellcheck',
+        'shfmt',
+        'sqlfluff',
+        'stylua',
+        'taplo',
+        'templ',
+        'yamlfmt',
+      })
+    end,
     opts = {
       notify_on_error = false,
       format_on_save = function(bufnr)

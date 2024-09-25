@@ -1,8 +1,19 @@
 return {
-
   { -- Linting
     'mfussenegger/nvim-lint',
     event = { 'BufReadPre', 'BufNewFile' },
+    init = function()
+      -- You can add other tools here that you want Mason to install
+      -- for you, so that they are available from within Neovim.
+      vim.g.mason_tools = vim.list_extend(vim.g.mason_tools, {
+        'checkmake',
+        'htmlhint',
+        'markdownlint',
+        'sqlfluff',
+        'staticcheck',
+        'codespell', -- Used on all filetypes below.
+      })
+    end,
     config = function()
       local lint = require 'lint'
       lint.linters_by_ft = {

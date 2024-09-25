@@ -20,7 +20,6 @@ return {
       -- Automatically install LSPs and related tools to stdpath for Neovim
       { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
-      'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
@@ -31,6 +30,7 @@ return {
       -- Needed to format by LSP modified.
       'joechrisellis/lsp-format-modifications.nvim',
     },
+
     config = function()
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
@@ -222,23 +222,7 @@ return {
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-        'bash-language-server',
-        'shellcheck',
-        'buildifier',
-        'clang-format',
-        'shfmt',
-        'isort',
-        'black',
-        'codespell',
-        'htmlhint',
-        'prettierd',
-        'prettier',
-        'sqlfluff',
-      })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      vim.g.mason_tools = vim.list_extend(vim.g.mason_tools, vim.tbl_keys(servers or {}))
 
       require('mason-lspconfig').setup {
         handlers = {
