@@ -26,6 +26,19 @@ return {
         harpoon:list():clear()
       end)
 
+      map('<leader>aq', '1', function()
+        harpoon:list():select(1)
+      end)
+      map('<leader>aw', '2', function()
+        harpoon:list():select(2)
+      end)
+      map('<leader>ae', '3', function()
+        harpoon:list():select(3)
+      end)
+      map('<leader>ar', '4', function()
+        harpoon:list():select(4)
+      end)
+
       -- Telescope Configuration
       -- https://github.com/ThePrimeagen/harpoon/tree/harpoon2?tab=readme-ov-file#telescope
       local conf = require('telescope.config').values

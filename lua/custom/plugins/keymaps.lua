@@ -46,4 +46,6 @@ vim.keymap.set('n', 'J', 'mzJ`z')
 -- Disable Q, which repeats register.
 vim.keymap.set('n', 'Q', '<nop>')
 
+vim.keymap.set('n', '<leader>lr', ':LspRestart<CR>', { desc = 'LSP Restart' })
+
 return {}

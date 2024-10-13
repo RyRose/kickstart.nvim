@@ -74,6 +74,6 @@ vim.opt.foldlevelstart = 99
 vim.opt.foldenable = true
 
 -- Disable linewrap. I prefer the line to not wrap.
-vim.opt.wrap = false
+-- vim.opt.wrap = false
 
 return {}

@@ -17,7 +17,8 @@ return {
     config = function()
       local lint = require 'lint'
       lint.linters_by_ft = {
-        markdown = { 'markdownlint' },
+        -- Disable markdown since it activates on shift-k.
+        -- markdown = { 'markdownlint' },
         go = { 'staticcheck' },
         make = { 'checkmake' },
         html = { 'htmlhint' },

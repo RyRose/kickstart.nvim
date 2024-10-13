@@ -177,7 +177,12 @@ return {
         clangd = {},
         bzl = {},
         yamlls = {},
-        taplo = {},
+        -- https://www.reddit.com/r/neovim/comments/1fkprp5/how_to_properly_setup_lspconfig_for_toml_files
+        taplo = {
+          filetypes = { 'toml' },
+          -- IMPORTANT: this is required for taplo LSP to work in non-git repositories
+          root_dir = require('lspconfig.util').root_pattern('*.toml', '.git'),
+        },
         rust_analyzer = {},
         gopls = {},
         pyright = {},
