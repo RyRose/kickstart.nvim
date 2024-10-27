@@ -14,6 +14,7 @@ return {
     init = function()
       -- Your DBUI configuration
       vim.g.db_ui_use_nerd_fonts = vim.g.have_nerd_font
+      vim.keymap.set('n', '<leader>td', '<cmd>DBUIToggle<CR>', { desc = 'Toggle [D]adbod UI SQL' })
     end,
   },
 }
