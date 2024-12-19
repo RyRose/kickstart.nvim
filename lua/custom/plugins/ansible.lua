@@ -13,4 +13,8 @@ vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
   end,
 })
 
+vim.keymap.set('n', '<leader>ta', function()
+  vim.bo.filetype = 'yaml.ansible'
+end, { desc = 'Toggle [A]nsible filetype' })
+
 return {}

@@ -105,12 +105,20 @@ return {
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = 'Search [N]eovim files' })
+      vim.keymap.set('n', '<leader>sN', function()
+        builtin.live_grep { cwd = vim.fn.stdpath 'config' }
+      end, { desc = "Search [N]eovim files' text" })
 
       -- Shortcut for searching your dot files
       vim.keymap.set('n', '<leader>s.', function()
         builtin.find_files {
           cwd = vim.fn.expand '~/.dotfiles',
           hidden = true,
+        }
+      end, { desc = "Search [.] files' text" })
+      vim.keymap.set('n', '<leader>s>', function()
+        builtin.live_grep {
+          cwd = vim.fn.expand '~/.dotfiles',
         }
       end, { desc = 'Search [.] files' })
     end,

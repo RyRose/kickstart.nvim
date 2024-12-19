@@ -20,4 +20,6 @@ vim.g.format_lsp_modified_on_save = function()
   return vim.b.format_lsp_modified_on_save
 end
 
-return {}
+return {
+  'tpope/vim-abolish',
+}
